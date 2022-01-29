@@ -28,11 +28,11 @@ public class Driver {
 		Room[] rooms = new Room[roomAmount];
 		int[][] requestedRooms = new int[roomAmount][roomAmount];
 		ArrayList<java.awt.Color> colors = new ArrayList<>();
-		for (int i = 0; i <= 255; i++){
-			for (int j = 0; j <= 255; j++){
+		for (int red = 0; red <= 255; red++){
+			for (int green = 0; green <= 255; green++){
 				{
-					for (int k = 0; k <= 255; k++){
-						colors.add(new Color(i, j , k));
+					for (int blue = 0; blue <= 255; blue++){
+						colors.add(new Color(red, green , blue));
 					}
 				}
 			}
