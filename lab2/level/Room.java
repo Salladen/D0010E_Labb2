@@ -44,4 +44,6 @@ public class Room {
 	public void connectWestTo(Room r) {
 		doorWest = r;
 	}
+
+
 }

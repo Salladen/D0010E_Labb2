@@ -80,5 +80,7 @@ public class Driver {
 				}
 			}
 		}
+		//TODO task 3.2
+		//TODO should program react if it gets "false" (maybe something for "true" too?) from "place"-method?
 	}
 }

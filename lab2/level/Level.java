@@ -23,9 +23,11 @@ public class Level extends Observable {
 
 			return true;
 		}
+		//TODO confused about "upper left corner" in
+		// "This method places the room so that its upper left corner ends up at (x, y)"
 	}
 	public void firstLocation(Room r) {
-
+		//TODO code for firstlocation-method, according to "6 Level", is required
 	}
 
 }
