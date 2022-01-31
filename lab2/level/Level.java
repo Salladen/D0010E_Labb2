@@ -9,25 +9,35 @@ public class Level extends Observable {
 
 	ArrayList<Integer> usedYCoordinates = new ArrayList<>();
 
-    public Level() {
-    }
-	public boolean place(Room r, int x, int y)  {
-		if(usedXCoordinates.contains(x) && usedYCoordinates.contains(y)) {
-			return false;
-		} else {
-			r.xCoordinate = x;
-			r.yCoordinate = y;
+	boolean hasStarted = false;
 
-			usedXCoordinates.add(x);
-			usedYCoordinates.add(y);
+	Room currentLocation;
 
-			return true;
-		}
-		//TODO confused about "upper left corner" in
-		// "This method places the room so that its upper left corner ends up at (x, y)"
+	public Level() {
 	}
+
+	public boolean place(Room r, int x, int y) {
+		if (hasStarted) {
+			return false; //since it cannot place the room, the action should have failed
+							// as hard as if the coordinates was occupied
+		} else {
+			if (usedXCoordinates.contains(x) && usedYCoordinates.contains(y)) {
+				return false;
+			} else {
+				r.xCoordinate = x;
+				r.yCoordinate = y;
+
+				usedXCoordinates.add(x);
+				usedYCoordinates.add(y);
+
+				return true;
+			}
+		}
+	}
+
 	public void firstLocation(Room r) {
-		//TODO code for firstlocation-method, according to "6 Level", is required
+		this.hasStarted = true;
+		this.currentLocation = r;
 	}
 
 }

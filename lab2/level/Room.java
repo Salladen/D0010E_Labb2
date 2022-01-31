@@ -26,9 +26,9 @@ public class Room {
 		this.yCoordinate = dy;
 
 		this.floorColor = color;
-		System.out.println("\n dx = " + dx
-							+ "\n dy = " + dy
-							+ "\n color = " + color);
+//		System.out.println("\n dx = " + dx
+//							+ "\n dy = " + dy
+//							+ "\n color = " + color);
 	}
 
 	public void connectNorthTo(Room r) {
