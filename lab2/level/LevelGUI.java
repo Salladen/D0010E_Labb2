@@ -1,9 +1,7 @@
 
 package lab2.level;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Observable;
@@ -15,23 +13,27 @@ import javax.swing.JPanel;
 
 public class LevelGUI implements Observer {
 
-	private Level lv;
+	private Level level;
 	private Display d;
-	
+
 	public LevelGUI(Level level, String name) {
-		
-		this.lv = level;
-		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.level = level;
+		Dimension levelDims = level.getLevelDimensions();
+		System.out.println(levelDims);
+
 		JFrame frame = new JFrame(name);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// TODO: You should change 200 to a value 
 		// depending on the size of the level
-		d = new Display(lv,200,200);
-		
+		d = new Display(level,screenSize.width, screenSize.height);
+
 		frame.getContentPane().add(d);
-		frame.pack();
+		frame.setUndecorated(true);
+		frame.setAlwaysOnTop(true);
 		frame.setLocation(0,0);
+		frame.pack();
 		frame.setVisible(true);
 	}
 	
@@ -39,32 +41,87 @@ public class LevelGUI implements Observer {
 	public void update(Observable arg0, Object arg1) {
 		
 	}
-	
+
+
 	private class Display extends JPanel {
-		
-		
-		public Display(Level fp, int x, int y) {
-		
-			
+		private Level level;
+
+		public Display(Level l, int x, int y) {
+			this.level = l;
+
 			addKeyListener(new Listener());
 			
-			setBackground(Color.GREEN);
-			setPreferredSize(new Dimension(x+20,y+20));
+			setBackground(Color.darkGray.darker());
+			setPreferredSize(new Dimension(x,y));
 			setFocusable(true);
 		}
-	
-		
-		
+
+		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			
+
+			g.setColor(Color.BLUE);
+			g.fillRect(0,0,200, 200);
+
+			g.setColor(Color.WHITE);
+			g.drawRect(0,0,200, 200);
+
+			g.setColor(Color.MAGENTA);
+			g.fillRect(this.getWidth() - 200,this.getHeight() - 200,200, 200);
+
+			g.setColor(Color.WHITE);
+			g.drawRect(this.getWidth() - 200 - 1,this.getHeight() - 200 - 1,200, 200);
 		}
-		
+
+		public static void drawScaledImage(Level level, JFrame frame, Graphics g) {
+			Dimension levelDim = level.getLevelDimensions();
+			int levelWidth = levelDim.width;
+			int levelHeight = levelDim.height;
+
+
+			double levelAspect = (double) levelHeight / levelWidth;
+
+			int paneWidth = frame.getContentPane().getWidth();
+			int paneHeight = frame.getContentPane().getHeight();
+
+			double paneAspect = (double) paneHeight / paneWidth;
+
+			int scaledX = 0; // top left X position
+			int scaledY = 0; // top left Y position
+			int scaledWidth; // bottom right X position
+			int scaledHeight; // bottom right Y position
+
+			if (levelWidth < paneWidth && levelHeight < paneHeight) {
+				// the image is smaller than the canvas
+				scaledX = (paneWidth - levelWidth)  / 2;
+				scaledY = (paneHeight - levelHeight) / 2;
+				scaledWidth = levelWidth;
+				scaledHeight = levelHeight;
+
+			} else {
+				if (paneAspect > levelAspect) {
+					scaledY = paneHeight;
+					// keep image aspect ratio
+					paneHeight = (int) (paneWidth * levelAspect);
+					scaledY = (scaledY - paneHeight) / 2;
+				} else {
+					scaledX = paneWidth;
+					// keep image aspect ratio
+					paneWidth = (int) (paneHeight / levelAspect);
+					scaledX = (scaledX - paneWidth) / 2;
+				}
+				scaledWidth = paneWidth;
+				scaledHeight = paneHeight;
+			}
+
+			frame.getContentPane().paintComponents(g);
+		}
 
 	 	private class Listener implements KeyListener {
 
 	 		
 	 		public void keyPressed(KeyEvent arg0) {
+				 System.out.println(KeyEvent.getKeyText(arg0.getKeyCode()));
 	 		}
 
 	 		public void keyReleased(KeyEvent arg0) {

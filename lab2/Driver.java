@@ -1,14 +1,14 @@
 package lab2;
 
 import lab2.level.Level;
+import lab2.level.LevelGUI;
 import lab2.level.Room;
 
 import java.awt.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Predicate;
 
 public class Driver {
@@ -52,25 +52,38 @@ public class Driver {
         return random;
     }
 
-    public static ArrayList<java.awt.Color> getColors(int stepSize) {
-        ArrayList<java.awt.Color> colors = new ArrayList<>();
-
+    public static Color[] getColors(int stepSize) {
+        Color[] colors;
+        stepSize = Math.abs(stepSize);
+        if (stepSize % 2 == 0) {
+            colors = new Color[256 * 3 / stepSize - 2];
+        }
+        else {
+            colors = new Color[(int) Math.ceil((double) (256 * 3) / (double) stepSize)];
+        }
         // Iterates every color skipping every [stepSize] color
         for (int red = 0; red <= 255; red += stepSize) {
             for (int green = 0; green <= 255; green += stepSize) {
                 {
                     for (int blue = 0; blue <= 255; blue += stepSize) {
-                        colors.add(new Color(red, green, blue));
+                        int step = blue / stepSize + green / stepSize + red / stepSize;
+                        colors[step] = new Color(red, green, blue);
                     }
                 }
             }
+        }
+        List<Color> lColors = Arrays.asList(colors);
+        Collections.shuffle(lColors);
+
+        for (int i = 0; i < lColors.size(); i++) {
+            colors[i] = lColors.get(i);
         }
         return colors;
     }
 
 
 
-    public static void getRoomSuggestion(ArrayList<Color> colors, int roomAmount, Room[] rooms, int minWidth, int minHeight, int maxWidth, int maxHeight) {
+    public static void getRoomSuggestion(Color[] colors, int roomAmount, Room[] rooms, int minWidth, int minHeight, int maxWidth, int maxHeight) {
         ThreadMXBean threadMX = ManagementFactory.getThreadMXBean();
 
 
@@ -85,16 +98,15 @@ public class Driver {
         int areaTaken = 0;
 
         // The list of available free spaces
-        ArrayList<int[]> availableCords = new ArrayList<>();
+        List<int[]> availableCords = new ArrayList<>();
         // Quadrants of the space so that I don't have to collision check every room
-        ArrayList<Room>[] quadrants = new ArrayList[]{
+        List<Room>[] quadrants = new ArrayList[]{
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>()
         };
-        int randomColorIndex = random.nextInt(colors.size());
-        Color color = colors.remove(randomColorIndex);
+        Color color = colors[0];
 
         // Populate the list of available free spaces
         for (int x = 0; x < xBound; x++) {
@@ -106,7 +118,8 @@ public class Driver {
         // Create the first room
         int roomWidth = random.nextInt(minWidth, maxWidth + 1);
         int roomHeight = random.nextInt(minHeight, maxHeight + 1);
-        rooms[0] = new Room(0, 0, roomWidth, roomHeight, color);
+        rooms[0] = new Room(roomWidth, roomHeight, color);
+        rooms[0].setXY(0, 0);
         quadrants[0].add(rooms[0]);
 
 		/*for (int x = 0; x < roomWidth; x++){
@@ -171,7 +184,7 @@ public class Driver {
 				}
 				Set<Room> hashSet = new HashSet<>(quadrants[0]);
 				quadrants[0] = new ArrayList<>(hashSet);*/
-                for (ArrayList<Room> quadrant : quadrants) {
+                for (List<Room> quadrant : quadrants) {
                     quadrant.clear();
                 }
                 xLowBound = xBound;
@@ -208,35 +221,40 @@ public class Driver {
                 }
 
 
-                for (int y = roomHeight; y >= minHeight; y--) {
+                for (int dy = roomHeight; dy >= minHeight; dy--) {
                     sizeTest:
-                    for (int x = roomWidth; x >= minWidth; x--) {
-                        Room roomCandidate = new Room(randomCoordinate[0], randomCoordinate[1], x, y, color);
+                    for (int dx = roomWidth; dx >= minWidth; dx--) {
+                        Room roomCandidate = new Room(dx, dy, color);
+                        roomCandidate.setXY(randomCoordinate[0], randomCoordinate[1]);
 
                         // Does the room intersect with the 1st quadrant?
-                        ArrayList<Integer> intersectedQuadrants = new ArrayList<Integer>();
-                        Room rect2 = new Room(0, 0, xBound / 2, yBound / 2, Color.black);
+                        ArrayList<Integer> intersectedQuadrants = new ArrayList<>();
+                        Room rect2 = new Room(xBound / 2, yBound / 2, Color.black);
+                        rect2.setXY(0,0);
 
                         if (roomCandidate.roomIsColliding(rect2)) {
                             intersectedQuadrants.add(0);
                         }
 
                         // Does the room intersect with the 2nd quadrant?
-                        rect2 = new Room(xBound / 2, 0, xBound / 2, yBound / 2, Color.black);
+                        rect2 = new Room(xBound / 2, yBound / 2, Color.black);
+                        rect2.setXY(xBound / 2, 0);
 
                         if (roomCandidate.roomIsColliding(rect2)) {
                             intersectedQuadrants.add(1);
                         }
 
                         // Does the room intersect with the 3rd quadrant?
-                        rect2 = new Room(0, yBound / 2, xBound / 2, yBound / 2, Color.black);
+                        rect2 = new Room(xBound / 2, yBound / 2, Color.black);
+                        rect2.setXY(0, yBound / 2);
 
                         if (roomCandidate.roomIsColliding(rect2)) {
                             intersectedQuadrants.add(2);
                         }
 
                         // Does the room intersect with the 4th quadrant?
-                        rect2 = new Room(xBound / 2, yBound / 2, xBound / 2, yBound / 2, Color.black);
+                        rect2 = new Room(xBound / 2, yBound / 2, Color.black);
+                        rect2.setXY(xBound / 2, yBound / 2);
 
                         if (roomCandidate.roomIsColliding(rect2)) {
                             intersectedQuadrants.add(3);
@@ -244,15 +262,16 @@ public class Driver {
 
                         for (int quadrant : intersectedQuadrants) {
                             for (Room room : quadrants[quadrant]) {
-                                Room cordinatePoint = new Room(randomCoordinate[0], randomCoordinate[1], 1, 1, Color.black);
+                                Room coordinatePoint = new Room(1, 1, Color.black);
+                                coordinatePoint.setXY(randomCoordinate[0], randomCoordinate[1]);
 
-                                if (cordinatePoint.roomIsColliding(rect2)){ // Origin is occupied by room, no size will work
+                                if (coordinatePoint.roomIsColliding(room)){ // Origin is occupied by room, no size will work
                                     availableCords.remove(randomCoordinateIndex);
                                     continue roomPlacement;
                                 }
-                                else if (roomCandidate.roomIsColliding(rect2) && x > minWidth && y > minHeight) { // If the room doesn't fit, try a smaller size
+                                else if (roomCandidate.roomIsColliding(room) && dx > minWidth && dy > minHeight) { // If the room doesn't fit, try a smaller size
                                     continue sizeTest;
-                                } else if (roomCandidate.roomIsColliding(rect2)) { // If no sizes worked then remove this index and try a different one
+                                } else if (roomCandidate.roomIsColliding(room)) { // If no sizes worked then remove this index and try a different one
                                     availableCords.remove(randomCoordinateIndex);
                                     continue roomPlacement;
                                 }
@@ -265,11 +284,11 @@ public class Driver {
                         }
 
                         // Add the room to the list of rooms
-                        randomColorIndex = random.nextInt(colors.size());
-                        color = colors.remove(randomColorIndex);
+                        color = colors[i % colors.length];
 
-                        roomCandidate = new Room(randomCoordinate[0], randomCoordinate[1], x, y, color);
-                        areaTaken += x * y;
+                        roomCandidate = new Room(dx, dy, color);
+                        roomCandidate.setXY(randomCoordinate[0], randomCoordinate[1]);
+                        areaTaken += dx * dy;
                         rooms[i] = roomCandidate;
 
 
@@ -310,7 +329,7 @@ public class Driver {
         }
 
         for (int i = 0; i < roomAmount; i++) {
-            ArrayList<Integer> roomExclusion = new ArrayList<Integer>();
+            ArrayList<Integer> roomExclusion = new ArrayList<>();
             roomExclusion.add(i);
             if (isolatedRooms.size() > 0) {
                 isolatedRooms.remove((Integer) i);
@@ -333,21 +352,10 @@ public class Driver {
                 }
 
                 switch (j) {
-                    case 1:
-                        rooms[i].connectNorthTo(randomRoom);
-                        break;
-
-                    case 2:
-                        rooms[i].connectEastTo(randomRoom);
-                        break;
-
-                    case 3:
-                        rooms[j].connectSouthTo(randomRoom);
-                        break;
-
-                    case 4:
-                        rooms[i].connectWestTo(randomRoom);
-                        break;
+                    case 1 -> rooms[i].connectNorthTo(randomRoom);
+                    case 2 -> rooms[i].connectEastTo(randomRoom);
+                    case 3 -> rooms[j].connectSouthTo(randomRoom);
+                    case 4 -> rooms[i].connectWestTo(randomRoom);
                 }
             }
         }
@@ -358,17 +366,17 @@ public class Driver {
         Random random = new Random();
         ThreadMXBean threadMX = ManagementFactory.getThreadMXBean();
 
-        ArrayList<java.awt.Color> colors = getColors(1);
+        Color[] colors = getColors(1);
 
         // int roomAmount = random.nextInt(5,26);
-        int roomAmount = 500;
+        int roomAmount = colors.length;
         Room[] rooms = new Room[roomAmount];
 
-        int maxWidth = 1;
-        int maxHeight = 100;
+        int maxWidth = 10;
+        int maxHeight = 10;
 
         int minHeight = 5;
-        int minWidth = 1;
+        int minWidth = 5;
 
         double time = threadMX.getThreadCpuTime(1);
         getRoomSuggestion(colors, roomAmount, rooms, minWidth, minHeight, maxWidth, maxHeight);
@@ -384,8 +392,11 @@ public class Driver {
                 rooms[room] = null;
             }
         }
+
         System.out.println(time + " seconds");
         System.out.printf("%s rooms / second%n", rooms.length / time);
+
+        LevelGUI gui = new LevelGUI(level, "lvl1");
         //TODO Others: Add comments
     }
 }

@@ -1,54 +1,71 @@
 package lab2.level;
 
-import lab2.Driver;
-
 import java.awt.*;
 
 
 public class Room {
-    Room doorNorth;
-    Room doorEast;
-    Room doorSouth;
-    Room doorWest;
-
-    Color floorColor;
     // Only for testing purposes
     private final int width;
     private final int height;
-    private final int x;
-	private final int y;
+    private int x;
+    private int y;
+    private final Color floorColor;
+    private Room doorNorth;
+    private Room doorEast;
+    private Room doorSouth;
+    private Room doorWest;
 
+    public Room(Room room) {
+        this.x = room.x;
+        this.y = room.y;
 
-    public Room(int x, int y, int dx, int dy, Color color) {
-        this.x = x;
-        this.y = y;
+        this.width = room.width;
+        this.height = room.height;
 
-        width = dx;
-        height = dy;
+        this.floorColor = room.floorColor;
 
-        floorColor = color;
+        this.doorNorth = room.doorNorth;
+        this.doorEast = room.doorEast;
+        this.doorSouth = room.doorSouth;
+        this.doorWest = room.doorWest;
+        //		System.out.println("\n dx = " + dx
+        //							+ "\n dy = " + dy
+        //							+ "\n color = " + color);
+    }
+
+    public Room(int dx, int dy, Color color) {
+        this.width = dx;
+        this.height = dy;
+
+        this.floorColor = color;
         //		System.out.println("\n dx = " + dx
         //							+ "\n dy = " + dy
         //							+ "\n color = " + color);
 
-
     }
 
-    public void connectNorthTo(Room r) {
-        doorNorth = r;
+    public Room getNorth() { return doorNorth; }
 
+    public Room getEast() { return doorEast; }
+
+    public Room getSouth() { return doorSouth; }
+
+    public Room getWest() { return doorWest; }
+
+    public void connectNorthTo(Room r) {
+        doorNorth = (r != this) ? r : null;
     }
 
     public void connectEastTo(Room r) {
-        doorEast = r;
+        doorEast = (r != this) ? r : null;
     }
 
     public void connectSouthTo(Room r) {
-        doorSouth = r;
+        doorSouth = (r != this) ? r : null;
     }
 
     public void connectWestTo(Room r) {
-        doorWest = r;
+        doorWest = (r != this) ? r : null;
     }
 
     public int getX() {
@@ -57,6 +74,11 @@ public class Room {
 
     public int getY() {
         return y;
+    }
+
+    public void setXY(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     public int getWidth() {

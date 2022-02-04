@@ -1,7 +1,10 @@
 package lab2.level;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Observable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Level extends Observable {
     private final ArrayList<Room> roomsContained = new ArrayList<>();
@@ -41,35 +44,47 @@ public class Level extends Observable {
     }
 
     void changeRoomNorth() {
-        if (currentLocation.doorNorth != null) {
-            this.currentLocation = currentLocation.doorNorth;
+        if (currentLocation.getNorth() != null) {
+            this.currentLocation = currentLocation.getNorth();
             setChanged();
             notifyObservers();
         }
     }
 
     void changeRoomEast() {
-        if (currentLocation.doorEast != null) {
-            this.currentLocation = currentLocation.doorEast;
+        if (currentLocation.getEast() != null) {
+            this.currentLocation = currentLocation.getEast();
             setChanged();
             notifyObservers();
         }
     }
 
     void changeRoomSouth() {
-        if (currentLocation.doorSouth != null) {
-            this.currentLocation = currentLocation.doorSouth;
+        if (currentLocation.getSouth() != null) {
+            this.currentLocation = currentLocation.getSouth();
             setChanged();
             notifyObservers();
         }
     }
 
     void changeRoomWest() {
-        if (currentLocation.doorWest != null) {
-            this.currentLocation = currentLocation.doorWest;
+        if (currentLocation.getWest() != null) {
+            this.currentLocation = currentLocation.getWest();
             setChanged();
             notifyObservers();
         }
+    }
+
+    public Dimension getLevelDimensions(){
+        AtomicInteger width = new AtomicInteger();
+        AtomicInteger height = new AtomicInteger();
+
+        roomsContained.stream().max(Comparator.
+                comparing(Room::getX)).ifPresent(room -> width.set(room.getX()));
+
+        roomsContained.stream().max(Comparator.
+                comparing(Room::getY)).ifPresent(room -> height.set(room.getY()));
+        return new Dimension(width.get(),height.get());
     }
 
     //Code that I wrote after getting confused by the wording in Task 5 but, since it looked uglier than what I
