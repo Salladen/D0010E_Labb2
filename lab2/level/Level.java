@@ -44,32 +44,32 @@ public class Level extends Observable {
     }
 
     void changeRoomNorth() {
-        if (currentLocation.getNorth() != null) {
-            this.currentLocation = currentLocation.getNorth();
+        if (currentLocation.doorNorth != null) {
+            this.currentLocation = currentLocation.doorNorth;
             setChanged();
             notifyObservers();
         }
     }
 
     void changeRoomEast() {
-        if (currentLocation.getEast() != null) {
-            this.currentLocation = currentLocation.getEast();
+        if (currentLocation.doorEast != null) {
+            this.currentLocation = currentLocation.doorEast;
             setChanged();
             notifyObservers();
         }
     }
 
     void changeRoomSouth() {
-        if (currentLocation.getSouth() != null) {
-            this.currentLocation = currentLocation.getSouth();
+        if (currentLocation.doorSouth != null) {
+            this.currentLocation = currentLocation.doorSouth;
             setChanged();
             notifyObservers();
         }
     }
 
     void changeRoomWest() {
-        if (currentLocation.getWest() != null) {
-            this.currentLocation = currentLocation.getWest();
+        if (currentLocation.doorWest != null) {
+            this.currentLocation = currentLocation.doorWest;
             setChanged();
             notifyObservers();
         }
