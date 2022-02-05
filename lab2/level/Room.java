@@ -5,15 +5,15 @@ import java.awt.*;
 
 public class Room {
     // Only for testing purposes
-    private final int width;
-    private final int height;
+    final int width;
+    final int height;
     private int x;
     private int y;
     private final Color floorColor;
-    private Room doorNorth;
-    private Room doorEast;
-    private Room doorSouth;
-    private Room doorWest;
+    Room doorNorth;
+    Room doorEast;
+    Room doorSouth;
+    Room doorWest;
 
     public Room(Room room) {
         this.x = room.x;
