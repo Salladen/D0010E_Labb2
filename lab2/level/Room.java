@@ -89,6 +89,10 @@ public class Room {
         return height;
     }
 
+    public Color getFloorColor(){
+        return floorColor;
+    }
+
     public boolean roomIsColliding(Room room2) {
         // Are the sides of one rectangle touching the other?
 

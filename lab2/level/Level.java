@@ -79,13 +79,20 @@ public class Level extends Observable {
         AtomicInteger width = new AtomicInteger();
         AtomicInteger height = new AtomicInteger();
 
-        roomsContained.stream().max(Comparator.
-                comparing(Room::getX)).ifPresent(room -> width.set(room.getX()));
+        Comparator<Room> c = Comparator.comparingInt(r -> (r.getWidth() + r.getX()));
+        roomsContained.stream().max(c).ifPresent(room -> width.set(room.getX() + room.getWidth()));
 
-        roomsContained.stream().max(Comparator.
-                comparing(Room::getY)).ifPresent(room -> height.set(room.getY()));
+        c = Comparator.comparingInt(r -> (r.getHeight() + r.getY()));
+        roomsContained.stream().max(c).ifPresent(room -> height.set(room.getY() + room.getHeight()));
+
         return new Dimension(width.get(),height.get());
     }
+
+    public ArrayList<Room> getRoomsContained() {
+        return roomsContained;
+    }
+
+    public void clearRoomsContained() {roomsContained.clear();}
 
     //Code that I wrote after getting confused by the wording in Task 5 but, since it looked uglier than what I
     // first made, I just commented it away. Feel free to delete it if you want a cleaner class.
