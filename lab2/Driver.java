@@ -404,6 +404,9 @@ public class Driver {
         System.out.println(time + " seconds");
         System.out.printf("%s rooms / second%n", (rooms.length * 100) / time);
 
+        //Chooses first location
+        level.firstLocation(rooms[random.nextInt(0,(rooms.length - 1))]);
+
         LevelGUI gui = new LevelGUI(level, "lvl1");
         //TODO Others: Add comments
     }

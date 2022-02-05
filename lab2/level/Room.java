@@ -1,19 +1,21 @@
 package lab2.level;
 
 import java.awt.*;
+import java.util.ArrayList; //IDEA chose to add that import,
+                            //so why not?
 
 
 public class Room {
     // Only for testing purposes
-    private final int width;
-    private final int height;
-    private int x;
-    private int y;
-    private final Color floorColor;
-    private Room doorNorth;
-    private Room doorEast;
-    private Room doorSouth;
-    private Room doorWest;
+    final int width;
+    final int height;
+    int x;
+    int y;
+    final Color floorColor;
+    Room doorNorth;
+    Room doorEast;
+    Room doorSouth;
+    Room doorWest;
 
     public Room(Room room) {
         this.x = room.x;
@@ -44,13 +46,21 @@ public class Room {
 
     }
 
-    public Room getNorth() { return doorNorth; }
+    public Room getNorth() {
+        return doorNorth;
+    }
 
-    public Room getEast() { return doorEast; }
+    public Room getEast() {
+        return doorEast;
+    }
 
-    public Room getSouth() { return doorSouth; }
+    public Room getSouth() {
+        return doorSouth;
+    }
 
-    public Room getWest() { return doorWest; }
+    public Room getWest() {
+        return doorWest;
+    }
 
     public void connectNorthTo(Room r) {
         doorNorth = (r != this) ? r : null;
@@ -95,7 +105,6 @@ public class Room {
 
     public boolean roomIsColliding(Room room2) {
         // Are the sides of one rectangle touching the other?
-
         return this.x + this.width >= room2.x &&    // r1 right edge past r2 left
                 this.x <= room2.x + room2.width &&    // r1 left edge past r2 right
                 this.y + this.height >= room2.y &&    // r1 top edge past r2 bottom
