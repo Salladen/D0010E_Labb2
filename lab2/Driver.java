@@ -368,15 +368,15 @@ public class Driver {
 
         Color[] colors = getColors(1);
 
-        // int roomAmount = random.nextInt(5,26);
-        int roomAmount = colors.length;
+        int roomAmount = random.nextInt(5,26);
+        //int roomAmount = colors.length;
         Room[] rooms = new Room[roomAmount];
 
-        int maxWidth = 10;
-        int maxHeight = 10;
+        int maxWidth = 50;
+        int maxHeight = 50;
 
-        int minHeight = 5;
-        int minWidth = 5;
+        int minHeight = 20;
+        int minWidth = 20;
 
         double time = threadMX.getThreadCpuTime(1);
         getRoomSuggestion(colors, roomAmount, rooms, minWidth, minHeight, maxWidth, maxHeight);
@@ -395,6 +395,9 @@ public class Driver {
 
         System.out.println(time + " seconds");
         System.out.printf("%s rooms / second%n", rooms.length / time);
+
+        //Chooses first location
+        level.firstLocation(rooms[random.nextInt(0,(rooms.length - 1))]);
 
         LevelGUI gui = new LevelGUI(level, "lvl1");
         //TODO Others: Add comments

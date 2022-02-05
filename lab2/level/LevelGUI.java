@@ -10,7 +10,6 @@ import java.util.Observer;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
 public class LevelGUI implements Observer {
 
 	private Level level;
@@ -27,6 +26,7 @@ public class LevelGUI implements Observer {
 		
 		// TODO: You should change 200 to a value 
 		// depending on the size of the level
+
 		d = new Display(level,screenSize.width, screenSize.height);
 
 		frame.getContentPane().add(d);
@@ -60,7 +60,8 @@ public class LevelGUI implements Observer {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 
-			g.setColor(Color.BLUE);
+			//Old code by Sallad
+/*			g.setColor(Color.BLUE);
 			g.fillRect(0,0,200, 200);
 
 			g.setColor(Color.WHITE);
@@ -70,7 +71,25 @@ public class LevelGUI implements Observer {
 			g.fillRect(this.getWidth() - 200,this.getHeight() - 200,200, 200);
 
 			g.setColor(Color.WHITE);
-			g.drawRect(this.getWidth() - 200 - 1,this.getHeight() - 200 - 1,200, 200);
+			g.drawRect(this.getWidth() - 200 - 1,this.getHeight() - 200 - 1,200, 200);*/ // Old code by Sallad
+
+			//Displays all rooms and gives a double border that is pink and black to the currentlocation
+			for(int i = 0; i < level.roomsContained.size(); i++) {
+				if(level.roomsContained.get(i) == level.currentLocation) {
+					g.setColor(Color.PINK);
+					g.drawRect(level.roomsContained.get(i).x - 2, level.roomsContained.get(i).y - 2,
+							level.roomsContained.get(i).width + 4, level.roomsContained.get(i).height + 4);
+
+					g.setColor(Color.BLACK);
+					g.drawRect(level.roomsContained.get(i).x - 3, level.roomsContained.get(i).y - 3,
+							level.roomsContained.get(i).width + 6, level.roomsContained.get(i).height + 6);
+
+				}
+				g.setColor(level.roomsContained.get(i).floorColor);
+
+				g.fillRect(level.roomsContained.get(i).x, level.roomsContained.get(i).y,
+							level.roomsContained.get(i).width, level.roomsContained.get(i).height);
+			}
 		}
 
 		public static void drawScaledImage(Level level, JFrame frame, Graphics g) {
@@ -121,7 +140,29 @@ public class LevelGUI implements Observer {
 
 	 		
 	 		public void keyPressed(KeyEvent arg0) {
-				 System.out.println(KeyEvent.getKeyText(arg0.getKeyCode()));
+				 switch(KeyEvent.getKeyText(arg0.getKeyCode())) {
+					 case "Up": {
+						 level.changeRoomNorth();
+						 break;
+					 }
+					 case "Right": {
+						 level.changeRoomEast();
+						 break;
+					 }
+					 case "Down": {
+						 level.changeRoomSouth();
+						 break;
+					 }
+					 case "Left": {
+						 level.changeRoomWest();
+						 break;
+					 }
+					 case "Escape": {
+						 System.exit(0);
+					 }
+				 }
+				 //System.out.println(KeyEvent.getKeyText(arg0.getKeyCode()));
+				 repaint();
 	 		}
 
 	 		public void keyReleased(KeyEvent arg0) {
