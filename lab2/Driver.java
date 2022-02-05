@@ -53,32 +53,30 @@ public class Driver {
     }
 
     public static Color[] getColors(int stepSize) {
-        Color[] colors;
+        List<Color> colors;
         stepSize = Math.abs(stepSize);
-        if (stepSize % 2 == 0) {
-            colors = new Color[256 * 3 / stepSize - 2];
-        }
-        else {
-            colors = new Color[(int) Math.ceil((double) (256 * 3) / (double) stepSize)];
-        }
+
+       // int test = 255 - (255 % stepSize);
+       // colors = new Color[(test / stepSize + test) / stepSize * (255 / stepSize + 1) + test * (255 / stepSize + 1) * (255 / stepSize + 1) / stepSize];
+        colors = new ArrayList<>();
+        int count = 0;
         // Iterates every color skipping every [stepSize] color
         for (int red = 0; red <= 255; red += stepSize) {
             for (int green = 0; green <= 255; green += stepSize) {
                 {
                     for (int blue = 0; blue <= 255; blue += stepSize) {
-                        int step = blue / stepSize + green / stepSize + red / stepSize;
-                        colors[step] = new Color(red, green, blue);
+                        colors.add(new Color(red / 10 * 8, green / 10 * 8, blue / 10 * 8));
                     }
                 }
             }
         }
-        List<Color> lColors = Arrays.asList(colors);
-        Collections.shuffle(lColors);
+        Collections.shuffle(colors);
 
-        for (int i = 0; i < lColors.size(); i++) {
-            colors[i] = lColors.get(i);
+        Color[] aColors = new Color[colors.size()];
+        for (int i = 0; i < colors.size(); i++) {
+            aColors[i] = colors.get(i);
         }
-        return colors;
+        return aColors;
     }
 
 
@@ -91,8 +89,12 @@ public class Driver {
 
 
         // Setting some temporary bounds on where rooms can be placed
-        int xBound = Math.max(4 * maxWidth, 200);
-        int yBound = Math.max(4 * maxHeight, 200);
+        // int xBound = Math.max(12 * maxWidth, 100);
+        // int yBound = Math.max(12 * maxHeight, 100);
+
+        int xBound = (maxWidth + minWidth) / 2 * roomAmount / 12;
+        int yBound = (maxHeight + minHeight) / 2 * roomAmount / 12;
+
         int xLowBound = 0;
         int yLowBound = 0;
         int areaTaken = 0;
@@ -139,7 +141,7 @@ public class Driver {
 
         for (int i = 1; i < roomAmount; i++) {
             if (i % 100 == 0){
-                System.out.println((double) i / (double) roomAmount + "% " + i + "/" + roomAmount);
+                System.out.println((double) 100 * i / (double) roomAmount + "% " + i + "/" + roomAmount);
             }
             /* if ((double) ((availableCords.size() - availableCordsSizeOffset)) / (double) (yBound * xBound) <= 0.6) {
                 availableCords.clear();
@@ -166,35 +168,37 @@ public class Driver {
                 yBound *= 2;
             }*/
 
-            if ((double) (areaTaken) / (double) (yBound * xBound - xLowBound * yLowBound)  >= 0.4) {
-                availableCords.clear();
-                areaTaken = 0;
-                for (int x = xBound; x < xBound * 2; x++) {
-                    for (int y = 0; y < yBound * 2; y++) {
-                        availableCords.add(new int[]{x, y});
+
+            roomPlacement:
+            while (true) {
+                if ((double) (areaTaken) / (double) (yBound * xBound - xLowBound * yLowBound)  >= 0.2 || availableCords.size() == 0) {
+                    availableCords.clear();
+                    areaTaken = 0;
+                    double rescaleFactor = 1.2;
+                    for (int x = xBound; x < xBound * rescaleFactor; x++) {
+                        for (int y = 0; y < yBound * rescaleFactor; y++) {
+                            availableCords.add(new int[]{x, y});
+                        }
                     }
-                }
-                for (int x = 0; x < xBound * 2; x++) {
-                    for (int y = yBound; y < yBound * 2; y++) {
-                        availableCords.add(new int[]{x, y});
+                    for (int x = 0; x < xBound * rescaleFactor; x++) {
+                        for (int y = yBound; y < yBound * rescaleFactor; y++) {
+                            availableCords.add(new int[]{x, y});
+                        }
                     }
-                }
 				/*for (ArrayList<Room> quadrant: quadrants){
 					quadrants[0].addAll(quadrant);
 				}
 				Set<Room> hashSet = new HashSet<>(quadrants[0]);
 				quadrants[0] = new ArrayList<>(hashSet);*/
-                for (List<Room> quadrant : quadrants) {
-                    quadrant.clear();
+                    for (List<Room> quadrant : quadrants) {
+                        quadrant.clear();
+                    }
+                    xLowBound = xBound;
+                    yLowBound = yBound;
+                    xBound *= rescaleFactor;
+                    yBound *= rescaleFactor;
                 }
-                xLowBound = xBound;
-                yLowBound = yBound;
-                xBound *= 2;
-                yBound *= 2;
-            }
 
-            roomPlacement:
-            while (true) {
                 // Pick a random index from the list of available coordinates
                 int randomCoordinateIndex = random.nextInt(0, availableCords.size());
                 // Get the coordinates stored at that index
@@ -366,17 +370,21 @@ public class Driver {
         Random random = new Random();
         ThreadMXBean threadMX = ManagementFactory.getThreadMXBean();
 
-        Color[] colors = getColors(1);
+        Color[] colors = getColors(63);
 
-        int roomAmount = random.nextInt(5,26);
-        //int roomAmount = colors.length;
+        // int roomAmount = random.nextInt(5,26);
+        System.out.println(colors.length);
+        int roomAmount = colors.length;
         Room[] rooms = new Room[roomAmount];
 
-        int maxWidth = 50;
-        int maxHeight = 50;
+        int randint1 = random.nextInt(3,50);
+        int randint2 =  random.nextInt(3, randint1 + 1);
 
-        int minHeight = 20;
-        int minWidth = 20;
+        int maxWidth = randint1;
+        int maxHeight = randint1;
+
+        int minHeight = randint2;
+        int minWidth = randint2;
 
         double time = threadMX.getThreadCpuTime(1);
         getRoomSuggestion(colors, roomAmount, rooms, minWidth, minHeight, maxWidth, maxHeight);
@@ -394,12 +402,54 @@ public class Driver {
         }
 
         System.out.println(time + " seconds");
-        System.out.printf("%s rooms / second%n", rooms.length / time);
+        System.out.printf("%s rooms / second%n", (rooms.length * 100) / time);
 
         //Chooses first location
         level.firstLocation(rooms[random.nextInt(0,(rooms.length - 1))]);
 
         LevelGUI gui = new LevelGUI(level, "lvl1");
+        //TODO Others: Add comments
+    }
+
+    public void changeLevel(Level l){
+        Level level = l;
+        l.clearRoomsContained();
+        Random random = new Random();
+        ThreadMXBean threadMX = ManagementFactory.getThreadMXBean();
+
+        Color[] colors = getColors(63);
+
+        // int roomAmount = random.nextInt(5,26);
+        System.out.println(colors.length);
+        int roomAmount = colors.length;
+        Room[] rooms = new Room[roomAmount];
+
+        int randint1 = random.nextInt(3,50);
+        int randint2 =  random.nextInt(3, randint1 + 1);
+
+        int maxWidth = randint1;
+        int maxHeight = randint1;
+
+        int minHeight = randint2;
+        int minWidth = randint2;
+
+        double time = threadMX.getThreadCpuTime(1);
+        getRoomSuggestion(colors, roomAmount, rooms, minWidth, minHeight, maxWidth, maxHeight);
+        time = threadMX.getThreadCpuTime(1) - time;
+        time = time / Math.pow(10, 9);
+
+
+        getConnectionSuggestion(rooms);
+
+        // Place rooms, if legal by leve.place()
+        for (int room = 0; room < rooms.length; room++) {
+            if (!(level.place(rooms[room]))) {
+                rooms[room] = null;
+            }
+        }
+
+        System.out.println(time + " seconds");
+        System.out.printf("%s rooms / second%n", (rooms.length * 100) / time);
         //TODO Others: Add comments
     }
 }

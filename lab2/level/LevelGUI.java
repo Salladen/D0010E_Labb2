@@ -1,14 +1,18 @@
 
 package lab2.level;
 
+import lab2.Driver;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
+
+import static java.awt.Color.WHITE;
+
 
 public class LevelGUI implements Observer {
 
@@ -26,13 +30,11 @@ public class LevelGUI implements Observer {
 		
 		// TODO: You should change 200 to a value 
 		// depending on the size of the level
-
-		d = new Display(level,screenSize.width, screenSize.height);
+		d = new Display(level,screenSize.width / 2, screenSize.height / 2);
 
 		frame.getContentPane().add(d);
-		frame.setUndecorated(true);
-		frame.setAlwaysOnTop(true);
-		frame.setLocation(0,0);
+		// frame.setAlwaysOnTop(true);
+		frame.setLocation(screenSize.width / 4,screenSize.height / 4);
 		frame.pack();
 		frame.setVisible(true);
 	}
@@ -59,21 +61,7 @@ public class LevelGUI implements Observer {
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-
-			//Old code by Sallad
-/*			g.setColor(Color.BLUE);
-			g.fillRect(0,0,200, 200);
-
-			g.setColor(Color.WHITE);
-			g.drawRect(0,0,200, 200);
-
-			g.setColor(Color.MAGENTA);
-			g.fillRect(this.getWidth() - 200,this.getHeight() - 200,200, 200);
-
-			g.setColor(Color.WHITE);
-			g.drawRect(this.getWidth() - 200 - 1,this.getHeight() - 200 - 1,200, 200);*/ // Old code by Sallad
-
-			//Displays all rooms and gives a double border that is pink and black to the currentlocation
+			/* Old code by drcatjk
 			for(int i = 0; i < level.roomsContained.size(); i++) {
 				if(level.roomsContained.get(i) == level.currentLocation) {
 					g.setColor(Color.PINK);
@@ -90,56 +78,78 @@ public class LevelGUI implements Observer {
 				g.fillRect(level.roomsContained.get(i).x, level.roomsContained.get(i).y,
 							level.roomsContained.get(i).width, level.roomsContained.get(i).height);
 			}
+			 */
+			drawScaledLevel(g);
 		}
 
-		public static void drawScaledImage(Level level, JFrame frame, Graphics g) {
-			Dimension levelDim = level.getLevelDimensions();
+		public void drawScaledLevel(Graphics g) {
+			Dimension levelDim = this.level.getLevelDimensions();
+			JRootPane frame = this.getRootPane();
+
 			int levelWidth = levelDim.width;
 			int levelHeight = levelDim.height;
 
-
 			double levelAspect = (double) levelHeight / levelWidth;
 
-			int paneWidth = frame.getContentPane().getWidth();
-			int paneHeight = frame.getContentPane().getHeight();
+			// int paneWidth = frame.getContentPane().getWidth() - 1;
+			// int paneHeight = frame.getContentPane().getHeight() - 1;
+
+			int paneWidth = this.getWidth() - 1;
+			int paneHeight = this.getHeight() - 1;
 
 			double paneAspect = (double) paneHeight / paneWidth;
+			int xOffset = 0; // top left X position
+			int yOffset = 0; // top left Y position
+			int scaledWidth = 0; // bottom right X position
+			int scaledHeight = 0; // bottom right Y position
 
-			int scaledX = 0; // top left X position
-			int scaledY = 0; // top left Y position
-			int scaledWidth; // bottom right X position
-			int scaledHeight; // bottom right Y position
 
-			if (levelWidth < paneWidth && levelHeight < paneHeight) {
-				// the image is smaller than the canvas
-				scaledX = (paneWidth - levelWidth)  / 2;
-				scaledY = (paneHeight - levelHeight) / 2;
-				scaledWidth = levelWidth;
-				scaledHeight = levelHeight;
 
+
+			if (paneAspect > levelAspect) {
+				yOffset = paneHeight;
+				// keep image aspect ratio
+				paneHeight = (int) (paneWidth * levelAspect);
+				yOffset = (yOffset - paneHeight) / 2;
 			} else {
-				if (paneAspect > levelAspect) {
-					scaledY = paneHeight;
-					// keep image aspect ratio
-					paneHeight = (int) (paneWidth * levelAspect);
-					scaledY = (scaledY - paneHeight) / 2;
-				} else {
-					scaledX = paneWidth;
-					// keep image aspect ratio
-					paneWidth = (int) (paneHeight / levelAspect);
-					scaledX = (scaledX - paneWidth) / 2;
-				}
-				scaledWidth = paneWidth;
-				scaledHeight = paneHeight;
+				xOffset = paneWidth;
+				// keep image aspect ratio
+				paneWidth = (int) (paneHeight / levelAspect);
+				xOffset = (xOffset - paneWidth) / 2;
 			}
+			scaledWidth = paneWidth;
+			scaledHeight = paneHeight;
+			double widthRatio = (double) scaledWidth / (double) levelWidth;
+			double heightRatio = (double) scaledHeight / (double) levelHeight;
 
-			frame.getContentPane().paintComponents(g);
+			g.setColor(WHITE);
+			g.drawRect(xOffset, yOffset, scaledWidth, scaledHeight);
+			for (Room room: this.level.getRoomsContained()){
+				g.setColor(room.getFloorColor());
+				g.fillRect((int) (room.getX() * widthRatio) + xOffset
+						, (int) (room.getY() * heightRatio) + yOffset
+						, (int) ((double) room.getWidth() * widthRatio)
+						, (int) ((double) room.getHeight() * heightRatio));
+
+				for (int borderSize = 0; borderSize < 1; borderSize++){
+					g.setColor(Color.WHITE);
+					g.drawRect((int) (room.getX() * widthRatio) + xOffset - borderSize
+							, (int) (room.getY() * heightRatio) + yOffset - borderSize
+							, (int) ((double) room.getWidth() * widthRatio + borderSize*2)
+							, (int) ((double) room.getHeight() * heightRatio) + borderSize*2);
+				}
+			}
 		}
 
 	 	private class Listener implements KeyListener {
 
 	 		
 	 		public void keyPressed(KeyEvent arg0) {
+				 System.out.println(KeyEvent.getKeyText(arg0.getKeyCode()));
+				 if (KeyEvent.getKeyText(arg0.getKeyCode()).equals("F5")){
+					 new Driver().changeLevel(level);
+					 repaint();
+				 }
 				 switch(KeyEvent.getKeyText(arg0.getKeyCode())) {
 					 case "Up": {
 						 level.changeRoomNorth();
@@ -159,6 +169,10 @@ public class LevelGUI implements Observer {
 					 }
 					 case "Escape": {
 						 System.exit(0);
+					 }
+					 case "F5": {
+						 new Driver().changeLevel(level);
+						 repaint();
 					 }
 				 }
 				 //System.out.println(KeyEvent.getKeyText(arg0.getKeyCode()));
