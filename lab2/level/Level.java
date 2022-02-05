@@ -7,11 +7,11 @@ import java.util.Observable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Level extends Observable {
-    private final ArrayList<Room> roomsContained = new ArrayList<>();
+    final ArrayList<Room> roomsContained = new ArrayList<>();
 
     private boolean hasStarted = false;
 
-    private Room currentLocation;
+    Room currentLocation;
 
     public Level() {
     }
@@ -19,7 +19,7 @@ public class Level extends Observable {
     public boolean place(Room r) {
         if (hasStarted) {
             return false; //since it cannot place the room, the action should have failed
-            // as hard as if the coordinates was occupied
+                            // as hard as if the coordinates was occupied
         } else {
             for (Room room : roomsContained) {
                 if (r.roomIsColliding(room)) {
