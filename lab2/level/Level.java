@@ -89,11 +89,14 @@ public class Level extends Observable {
     }
 
     public ArrayList<Room> getRoomsContained() {
-        return roomsContained;
+        return this.roomsContained;
     }
 
-    public void clearRoomsContained() {roomsContained.clear();}
+    public void clearRoomsContained() {this.roomsContained.clear();}
 
+    Room getCurrentLocation() {
+        return this.currentLocation;
+    }
     //Code that I wrote after getting confused by the wording in Task 5 but, since it looked uglier than what I
     // first made, I just commented it away. Feel free to delete it if you want a cleaner class.
 /*	public void changeRoom(String direction) {

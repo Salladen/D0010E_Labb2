@@ -22,6 +22,8 @@ public class LevelGUI implements Observer {
 	public LevelGUI(Level level, String name) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.level = level;
+		level.addObserver(this);
+
 		Dimension levelDims = level.getLevelDimensions();
 		System.out.println(levelDims);
 
@@ -41,7 +43,7 @@ public class LevelGUI implements Observer {
 	
 	
 	public void update(Observable arg0, Object arg1) {
-		
+		d.repaint();
 	}
 
 
@@ -125,6 +127,21 @@ public class LevelGUI implements Observer {
 			g.setColor(WHITE);
 			g.drawRect(xOffset, yOffset, scaledWidth, scaledHeight);
 			for (Room room: this.level.getRoomsContained()){
+				if(room == level.getCurrentLocation()) {
+					//TODO TASK 4.2, add a better/clearer way of showing current room,
+					// perhaps flashing the color of the room?
+					g.setColor(WHITE);
+					g.fillRect((int) (room.getX() * widthRatio) + xOffset - 2
+							, (int) (room.getY() * heightRatio) + yOffset - 2
+							, (int) ((double) room.getWidth() * widthRatio + 4)
+							, (int) ((double) room.getHeight() * heightRatio) + 4);
+
+					g.setColor(Color.BLACK);
+					g.fillRect((int) (room.getX() * widthRatio) + xOffset - 3
+							, (int) (room.getY() * heightRatio) + yOffset - 3
+							, (int) ((double) room.getWidth() * widthRatio + 6)
+							, (int) ((double) room.getHeight() * heightRatio) + 6);
+				}
 				g.setColor(room.getFloorColor());
 				g.fillRect((int) (room.getX() * widthRatio) + xOffset
 						, (int) (room.getY() * heightRatio) + yOffset
@@ -139,8 +156,8 @@ public class LevelGUI implements Observer {
 							, (int) ((double) room.getHeight() * heightRatio) + borderSize*2);
 				}
 			}
+			//TODO TASK 4.4, Add a way to display connections between room
 		}
-
 	 	private class Listener implements KeyListener {
 
 	 		
@@ -151,19 +168,20 @@ public class LevelGUI implements Observer {
 					 repaint();
 				 }
 				 switch(KeyEvent.getKeyText(arg0.getKeyCode())) {
-					 case "Up": {
+					 case "W": {
 						 level.changeRoomNorth();
 						 break;
 					 }
-					 case "Right": {
+					 case "D": {
 						 level.changeRoomEast();
 						 break;
 					 }
-					 case "Down": {
+					 case "S": {
+						 //TODO doesn't seem to work, no connections to the south?
 						 level.changeRoomSouth();
 						 break;
 					 }
-					 case "Left": {
+					 case "A": {
 						 level.changeRoomWest();
 						 break;
 					 }
@@ -176,7 +194,6 @@ public class LevelGUI implements Observer {
 					 }
 				 }
 				 //System.out.println(KeyEvent.getKeyText(arg0.getKeyCode()));
-				 repaint();
 	 		}
 
 	 		public void keyReleased(KeyEvent arg0) {

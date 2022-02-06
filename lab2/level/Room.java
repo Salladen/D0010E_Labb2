@@ -47,19 +47,19 @@ public class Room {
     }
 
     public Room getNorth() {
-        return doorNorth;
+        return this.doorNorth;
     }
 
     public Room getEast() {
-        return doorEast;
+        return this.doorEast;
     }
 
     public Room getSouth() {
-        return doorSouth;
+        return this.doorSouth;
     }
 
     public Room getWest() {
-        return doorWest;
+        return this.doorWest;
     }
 
     public void connectNorthTo(Room r) {
@@ -79,11 +79,11 @@ public class Room {
     }
 
     public int getX() {
-        return x;
+        return this.x;
     }
 
     public int getY() {
-        return y;
+        return this.y;
     }
 
     public void setXY(int x, int y) {
@@ -92,15 +92,15 @@ public class Room {
     }
 
     public int getWidth() {
-        return width;
+        return this.width;
     }
 
     public int getHeight() {
-        return height;
+        return this.height;
     }
 
     public Color getFloorColor(){
-        return floorColor;
+        return this.floorColor;
     }
 
     public boolean roomIsColliding(Room room2) {
