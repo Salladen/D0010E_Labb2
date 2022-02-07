@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Level extends Observable {
+public class Level extends myObservable {
     private final ArrayList<Room> roomsContained = new ArrayList<>();
 
     private boolean hasStarted = false;
@@ -17,7 +17,8 @@ public class Level extends Observable {
     }
 
     public boolean place(Room r) {
-        if (hasStarted) {
+
+        if (false) {
             return false; //since it cannot place the room, the action should have failed
                             // as hard as if the coordinates was occupied
         } else {
@@ -75,7 +76,7 @@ public class Level extends Observable {
         }
     }
 
-    public Dimension getLevelDimensions(){
+    Dimension getLevelDimensions(){
         AtomicInteger width = new AtomicInteger();
         AtomicInteger height = new AtomicInteger();
 

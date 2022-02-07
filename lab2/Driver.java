@@ -358,7 +358,7 @@ public class Driver {
                 switch (j) {
                     case 1 -> rooms[i].connectNorthTo(randomRoom);
                     case 2 -> rooms[i].connectEastTo(randomRoom);
-                    case 3 -> rooms[j].connectSouthTo(randomRoom);
+                    case 3 -> rooms[i].connectSouthTo(randomRoom);
                     case 4 -> rooms[i].connectWestTo(randomRoom);
                 }
             }
@@ -370,21 +370,21 @@ public class Driver {
         Random random = new Random();
         ThreadMXBean threadMX = ManagementFactory.getThreadMXBean();
 
-        Color[] colors = getColors(63);
+        Color[] colors = getColors(127);
 
         // int roomAmount = random.nextInt(5,26);
         System.out.println(colors.length);
         int roomAmount = colors.length;
         Room[] rooms = new Room[roomAmount];
 
-        int randint1 = random.nextInt(3,50);
+        int randint1 = random.nextInt(3,7);
         int randint2 =  random.nextInt(3, randint1 + 1);
 
-        int maxWidth = randint1;
-        int maxHeight = randint1;
+        int maxWidth = 7;
+        int maxHeight = 7;
 
-        int minHeight = randint2;
-        int minWidth = randint2;
+        int minHeight = 7;
+        int minWidth = 7;
 
         double time = threadMX.getThreadCpuTime(1);
         getRoomSuggestion(colors, roomAmount, rooms, minWidth, minHeight, maxWidth, maxHeight);
@@ -413,25 +413,25 @@ public class Driver {
 
     public void changeLevel(Level l){
         Level level = l;
-        l.clearRoomsContained();
+        level.clearRoomsContained();
         Random random = new Random();
         ThreadMXBean threadMX = ManagementFactory.getThreadMXBean();
 
-        Color[] colors = getColors(63);
+        Color[] colors = getColors(127);
 
         // int roomAmount = random.nextInt(5,26);
         System.out.println(colors.length);
         int roomAmount = colors.length;
         Room[] rooms = new Room[roomAmount];
 
-        int randint1 = random.nextInt(3,50);
+        int randint1 = random.nextInt(3,7);
         int randint2 =  random.nextInt(3, randint1 + 1);
 
-        int maxWidth = randint1;
-        int maxHeight = randint1;
+        int maxWidth = 7;
+        int maxHeight = 7;
 
-        int minHeight = randint2;
-        int minWidth = randint2;
+        int minHeight = 7;
+        int minWidth = 7;
 
         double time = threadMX.getThreadCpuTime(1);
         getRoomSuggestion(colors, roomAmount, rooms, minWidth, minHeight, maxWidth, maxHeight);

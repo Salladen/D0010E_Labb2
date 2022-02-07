@@ -14,8 +14,7 @@ import javax.swing.*;
 import static java.awt.Color.WHITE;
 
 
-public class LevelGUI implements Observer {
-
+public class LevelGUI extends myObserver {
 	private Level level;
 	private Display d;
 
@@ -124,32 +123,22 @@ public class LevelGUI implements Observer {
 			double widthRatio = (double) scaledWidth / (double) levelWidth;
 			double heightRatio = (double) scaledHeight / (double) levelHeight;
 
-			g.setColor(WHITE);
+			g.setColor(Color.LIGHT_GRAY);
 			g.drawRect(xOffset, yOffset, scaledWidth, scaledHeight);
-			for (Room room: this.level.getRoomsContained()){
-				if(room == level.getCurrentLocation()) {
-					//TODO TASK 4.2, add a better/clearer way of showing current room,
-					// perhaps flashing the color of the room?
-					g.setColor(WHITE);
-					g.fillRect((int) (room.getX() * widthRatio) + xOffset - 2
-							, (int) (room.getY() * heightRatio) + yOffset - 2
-							, (int) ((double) room.getWidth() * widthRatio + 4)
-							, (int) ((double) room.getHeight() * heightRatio) + 4);
 
-					g.setColor(Color.BLACK);
-					g.fillRect((int) (room.getX() * widthRatio) + xOffset - 3
-							, (int) (room.getY() * heightRatio) + yOffset - 3
-							, (int) ((double) room.getWidth() * widthRatio + 6)
-							, (int) ((double) room.getHeight() * heightRatio) + 6);
-				}
+			for (Room room: this.level.getRoomsContained()){
 				g.setColor(room.getFloorColor());
 				g.fillRect((int) (room.getX() * widthRatio) + xOffset
 						, (int) (room.getY() * heightRatio) + yOffset
 						, (int) ((double) room.getWidth() * widthRatio)
 						, (int) ((double) room.getHeight() * heightRatio));
 
-				for (int borderSize = 0; borderSize < 1; borderSize++){
-					g.setColor(Color.WHITE);
+				drawRoomConnections(g, room, widthRatio, heightRatio, xOffset, yOffset);
+
+				Color[] borderColor = new Color[]{Color.WHITE, Color.MAGENTA, Color.WHITE};
+				for (int borderSize = 0; borderSize < ((level.getCurrentLocation() == room) ? 3 : 1); borderSize++){
+					g.setColor(borderColor[borderSize]);
+
 					g.drawRect((int) (room.getX() * widthRatio) + xOffset - borderSize
 							, (int) (room.getY() * heightRatio) + yOffset - borderSize
 							, (int) ((double) room.getWidth() * widthRatio + borderSize*2)
@@ -158,39 +147,101 @@ public class LevelGUI implements Observer {
 			}
 			//TODO TASK 4.4, Add a way to display connections between room
 		}
-	 	private class Listener implements KeyListener {
 
-	 		
+		private void drawRoomConnections(Graphics g, Room room, double widthRatio, double heightRatio, int xOffset, int yOffset){
+			g.setColor(room.getFloorColor());
+			int x = (int) (room.getX() * widthRatio) + xOffset;
+			int y = (int) (room.getY() * heightRatio) + yOffset;
+			int width = (int) ((double) room.getWidth() * widthRatio);
+			int height = (int) ((double) room.getHeight() * heightRatio);
+
+			if (room.getNorth() != null) {
+				int n_x = (int) (room.getNorth().getX() * widthRatio) + xOffset;
+				int n_y = (int) (room.getNorth().getY() * heightRatio) + yOffset;
+				int n_width = (int) ((double) room.getNorth().getWidth() * widthRatio);
+				int n_height = (int) ((double) room.getNorth().getHeight() * heightRatio);
+
+				g.setColor(room.getNorth().getFloorColor());
+				g.fillRect(x + width * 2 / 5, y, width / 5, height / 5);
+
+				g.drawLine(x + width / 2, y, n_x + n_width / 2, n_y + n_height / 2);
+
+				g.setColor(Color.BLACK);
+				g.drawRect(x + width * 2 / 5, y, width / 5, height / 5);
+			}
+
+			if (room.getEast() != null) {
+				int e_x = (int) (room.getEast().getX() * widthRatio) + xOffset;
+				int e_y = (int) (room.getEast().getY() * heightRatio) + yOffset;
+				int e_width = (int) ((double) room.getEast().getWidth() * widthRatio);
+				int e_height = (int) ((double) room.getEast().getHeight() * heightRatio);
+
+				g.setColor(room.getEast().getFloorColor());
+				g.fillRect(x + width * 4 / 5, y + height * 2 / 5, width / 5, height / 5);
+
+				g.drawLine(x + width, y + height / 2, e_x + e_width / 2, e_y + e_height / 2);
+
+				g.setColor(Color.BLACK);
+				g.drawRect(x + width * 4 / 5, y + height * 2 / 5, width / 5, height / 5);
+			}
+
+			if (room.getSouth() != null) {
+				int s_x = (int) (room.getSouth().getX() * widthRatio) + xOffset;
+				int s_y = (int) (room.getSouth().getY() * heightRatio) + yOffset;
+				int s_width = (int) ((double) room.getSouth().getWidth() * widthRatio);
+				int s_height = (int) ((double) room.getSouth().getHeight() * heightRatio);
+
+				System.out.println(room.getSouth().getFloorColor());
+				g.setColor(room.getSouth().getFloorColor());
+				g.fillRect(x + width * 2 / 5, y + height * 4 / 5, width / 5, height / 5);
+
+				g.drawLine(x + width / 2, y + height, s_x + s_width / 2, s_y + s_height / 2);
+
+				g.setColor(Color.BLACK);
+				g.drawRect(x + width * 2 / 5, y + height * 4 / 5, width / 5, height / 5);
+			}
+
+			if (room.getWest() != null) {
+				int w_x = (int) (room.getWest().getX() * widthRatio) + xOffset;
+				int w_y = (int) (room.getWest().getY() * heightRatio) + yOffset;
+				int w_width = (int) ((double) room.getWest().getWidth() * widthRatio);
+				int w_height = (int) ((double) room.getWest().getHeight() * heightRatio);
+
+				g.setColor(room.getWest().getFloorColor());
+				g.fillRect(x, y + height * 2 / 5, width / 5, height / 5);
+
+				g.drawLine(x, y / 2, w_x + w_width / 2, w_y + w_height / 2);
+
+				g.setColor(Color.BLACK);
+				g.drawRect(x, y + height * 2 / 5, width / 5, height / 5);
+			}
+		}
+
+	 	private class Listener implements KeyListener {
 	 		public void keyPressed(KeyEvent arg0) {
-				 System.out.println(KeyEvent.getKeyText(arg0.getKeyCode()));
-				 if (KeyEvent.getKeyText(arg0.getKeyCode()).equals("F5")){
-					 new Driver().changeLevel(level);
-					 repaint();
-				 }
-				 switch(KeyEvent.getKeyText(arg0.getKeyCode())) {
-					 case "W": {
+				 switch(arg0.getKeyCode()) {
+					 case KeyEvent.VK_W: {
 						 level.changeRoomNorth();
 						 break;
 					 }
-					 case "D": {
+					 case KeyEvent.VK_D: {
 						 level.changeRoomEast();
 						 break;
 					 }
-					 case "S": {
+					 case KeyEvent.VK_S: {
 						 //TODO doesn't seem to work, no connections to the south?
 						 level.changeRoomSouth();
 						 break;
 					 }
-					 case "A": {
+					 case KeyEvent.VK_A: {
 						 level.changeRoomWest();
 						 break;
 					 }
-					 case "Escape": {
+					 case KeyEvent.VK_ESCAPE: {
 						 System.exit(0);
 					 }
-					 case "F5": {
+					 case KeyEvent.VK_F5: {
 						 new Driver().changeLevel(level);
-						 repaint();
 					 }
 				 }
 				 //System.out.println(KeyEvent.getKeyText(arg0.getKeyCode()));
