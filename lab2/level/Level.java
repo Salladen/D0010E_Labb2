@@ -98,54 +98,5 @@ public class Level extends myObservable {
     Room getCurrentLocation() {
         return this.currentLocation;
     }
-    //Code that I wrote after getting confused by the wording in Task 5 but, since it looked uglier than what I
-    // first made, I just commented it away. Feel free to delete it if you want a cleaner class.
-/*	public void changeRoom(String direction) {
-		switch (direction) {
-			case "north": {
-				if(currentLocation.doorNorth == null) {
-					break;
-				} else {
-					this.currentLocation = currentLocation.doorNorth;
-					setChanged();
-					notifyObservers();
-					break;
-				}
-			}
-			case "east": {
-				if(currentLocation.doorEast == null) {
-					break;
-				} else {
-					this.currentLocation = currentLocation.doorEast;
-					setChanged();
-					notifyObservers();
-					break;
-				}
-			}
-			case "south": {
-				if(currentLocation.doorSouth == null) {
-					break;
-				} else {
-					this.currentLocation = currentLocation.doorSouth;
-					setChanged();
-					notifyObservers();
-					break;
-				}
-			}
-			case "west": {
-				if(currentLocation.doorWest == null) {
-					break;
-				} else {
-					this.currentLocation = currentLocation.doorWest;
-					setChanged();
-					notifyObservers();
-					break;
-				}
-			}
-			default: {
-				throw new IllegalArgumentException();
-			}
-		}
-	}*/
 
 }

@@ -62,28 +62,10 @@ public class LevelGUI extends myObserver {
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			/* Old code by drcatjk
-			for(int i = 0; i < level.roomsContained.size(); i++) {
-				if(level.roomsContained.get(i) == level.currentLocation) {
-					g.setColor(Color.PINK);
-					g.drawRect(level.roomsContained.get(i).x - 2, level.roomsContained.get(i).y - 2,
-							level.roomsContained.get(i).width + 4, level.roomsContained.get(i).height + 4);
-
-					g.setColor(Color.BLACK);
-					g.drawRect(level.roomsContained.get(i).x - 3, level.roomsContained.get(i).y - 3,
-							level.roomsContained.get(i).width + 6, level.roomsContained.get(i).height + 6);
-
-				}
-				g.setColor(level.roomsContained.get(i).floorColor);
-
-				g.fillRect(level.roomsContained.get(i).x, level.roomsContained.get(i).y,
-							level.roomsContained.get(i).width, level.roomsContained.get(i).height);
-			}
-			 */
 			drawScaledLevel(g);
 		}
 
-		public void drawScaledLevel(Graphics g) {
+		private void drawScaledLevel(Graphics g) {
 			Dimension levelDim = this.level.getLevelDimensions();
 			JRootPane frame = this.getRootPane();
 

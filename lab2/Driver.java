@@ -585,6 +585,8 @@ public class Driver {
         int minWidth = 7;
 
         double time = threadMX.getThreadCpuTime(1);
+        //TODO remove effectivity text, ex "0.0 seconds
+        // Infinity rooms / second"
         getRoomSuggestion(colors, roomAmount, rooms, minWidth, minHeight, maxWidth, maxHeight);
         time = threadMX.getThreadCpuTime(1) - time;
         time = time / Math.pow(10, 9);
@@ -611,5 +613,11 @@ public class Driver {
         System.out.println(time + " seconds");
         System.out.printf("%s rooms / second%n", (rooms.length * 100) / time);
         //TODO Others: Add comments
+
+        //TODO "The methods open up one-way connections only. This means that if there is a corridor leading from
+        // a room r1 to another room r2, there is not automatically a corridor going back from r2 to r1"
+
+        //TODO way of showing that "firstLocation	ska	hindra	fler	place,	dvs	place	ska	förstås	gå	att	anropa	men
+        // den	funkar	då	inte	som	tänkt"
     }
 }
