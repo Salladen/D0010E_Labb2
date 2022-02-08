@@ -12,6 +12,22 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class Driver {
+    public static Room[] getSliceOfArray(Room[] arr,
+                                        int start, int end)
+    {
+
+        // Get the slice of the Array
+        Room[] slice = new Room[end - start];
+
+        // Copy elements of arr to slice
+        for (int i = 0; i < slice.length; i++) {
+            slice[i] = arr[start + i];
+        }
+
+        // return the slice
+        return slice;
+    }
+
     // Function to get ArrayList from Stream
     public static <T> ArrayList<T> removeIfPredicate(ArrayList<T> l, Predicate<T> p) {
         // Create an iterator from the l
@@ -174,7 +190,7 @@ public class Driver {
                 if ((double) (areaTaken) / (double) (yBound * xBound - xLowBound * yLowBound)  >= 0.2 || availableCords.size() == 0) {
                     availableCords.clear();
                     areaTaken = 0;
-                    double rescaleFactor = 1.2;
+                    double rescaleFactor = 2;
                     for (int x = xBound; x < xBound * rescaleFactor; x++) {
                         for (int y = 0; y < yBound * rescaleFactor; y++) {
                             availableCords.add(new int[]{x, y});
@@ -208,21 +224,6 @@ public class Driver {
                 // Try some widths and heights for the room & try some other location if that doesn't work
                 roomWidth = random.nextInt(minWidth, maxWidth + 1);
                 roomHeight = random.nextInt(minHeight, maxHeight + 1);
-
-                if (randomCoordinate[0] + roomWidth > xBound && minWidth >= xBound - randomCoordinate[0]) {
-                    if (minWidth > xBound - randomCoordinate[0]) {
-                        availableCords.remove(randomCoordinateIndex);
-                        continue;
-                    }
-                    roomWidth = xBound - randomCoordinate[0];
-                }
-                if (randomCoordinate[1] + roomHeight > yBound && minHeight >= yBound - randomCoordinate[1]) {
-                    if (minHeight > yBound - randomCoordinate[1]) {
-                        availableCords.remove(randomCoordinateIndex);
-                        continue;
-                    }
-                    roomHeight = yBound - randomCoordinate[1];
-                }
 
 
                 for (int dy = roomHeight; dy >= minHeight; dy--) {
@@ -266,7 +267,7 @@ public class Driver {
 
                         for (int quadrant : intersectedQuadrants) {
                             for (Room room : quadrants[quadrant]) {
-                                Room coordinatePoint = new Room(1, 1, Color.black);
+                                Room coordinatePoint = new Room(minWidth, minHeight, Color.black);
                                 coordinatePoint.setXY(randomCoordinate[0], randomCoordinate[1]);
 
                                 if (coordinatePoint.roomIsColliding(room)){ // Origin is occupied by room, no size will work
@@ -322,11 +323,103 @@ public class Driver {
         }
     }
 
-    public static void getConnectionSuggestion(Room[] rooms) {
+    public static void getConnectionSuggestion(ArrayList<Room> rooms, List<ArrayList<int[]>> availableDoors) {
         Random random = new Random();
 
-        int roomAmount = rooms.length;
+        int roomAmount = rooms.size();
 
+        for (int i = 0; i < roomAmount; i++) {
+            if (availableDoors.size() < 1 || (availableDoors.size() == 1 && availableDoors.get(0).get(0)[1] == i)){
+                break;
+            }
+            int randomRoomIndex;
+            int randomDoorIndex;
+            int[] randomDoor;
+
+            while (true) {
+                randomRoomIndex = random.nextInt(0, availableDoors.size());
+                randomDoorIndex = random.nextInt(0, availableDoors.get(randomRoomIndex).size());
+                randomDoor = availableDoors.get(randomRoomIndex).get(randomDoorIndex);
+
+                if (randomDoor[1] != i){
+                    availableDoors.get(randomRoomIndex).remove(randomDoorIndex);
+                    break;
+                }
+            }
+            if (availableDoors.get(randomRoomIndex).size() < 1){
+                availableDoors.remove(randomRoomIndex);
+            }
+
+            ConnectDoor_To_Door(rooms, i, randomDoor, "north");
+
+
+            if (availableDoors.size() < 1 || (availableDoors.size() == 1 && availableDoors.get(0).get(0)[1] == i)){
+                break;
+            }
+
+            while (true) {
+                randomRoomIndex = random.nextInt(0, availableDoors.size());
+                randomDoorIndex = random.nextInt(0, availableDoors.get(randomRoomIndex).size());
+                randomDoor = availableDoors.get(randomRoomIndex).get(randomDoorIndex);
+
+                if (randomDoor[1] != i){
+                    availableDoors.get(randomRoomIndex).remove(randomDoorIndex);
+                    break;
+                }
+            }
+
+            if (availableDoors.get(randomRoomIndex).size() < 1){
+                availableDoors.remove(randomRoomIndex);
+            }
+
+            ConnectDoor_To_Door(rooms, i, randomDoor, "east");
+
+
+            if (availableDoors.size() < 1 || (availableDoors.size() == 1 && availableDoors.get(0).get(0)[1] == i)){
+                break;
+            }
+
+            while (true) {
+                randomRoomIndex = random.nextInt(0, availableDoors.size());
+                randomDoorIndex = random.nextInt(0, availableDoors.get(randomRoomIndex).size());
+                randomDoor = availableDoors.get(randomRoomIndex).get(randomDoorIndex);
+
+                if (randomDoor[1] != i){
+                    availableDoors.get(randomRoomIndex).remove(randomDoorIndex);
+                    break;
+                }
+            }
+
+            if (availableDoors.get(randomRoomIndex).size() < 1){
+                availableDoors.remove(randomRoomIndex);
+            }
+
+            ConnectDoor_To_Door(rooms, i, randomDoor, "west");
+
+
+            if (availableDoors.size() < 1 || (availableDoors.size() == 1 && availableDoors.get(0).get(0)[1] == i)){
+                break;
+            }
+
+            while (true) {
+                randomRoomIndex = random.nextInt(0, availableDoors.size());
+                randomDoorIndex = random.nextInt(0, availableDoors.get(randomRoomIndex).size());
+                randomDoor = availableDoors.get(randomRoomIndex).get(randomDoorIndex);
+
+                if (randomDoor[1] != i){
+                    availableDoors.get(randomRoomIndex).remove(randomDoorIndex);
+                    break;
+                }
+            }
+
+            if (availableDoors.get(randomRoomIndex).size() < 1){
+                availableDoors.remove(randomRoomIndex);
+            }
+
+            ConnectDoor_To_Door(rooms, i, randomDoor, "south");
+        }
+
+        /*
         ArrayList<Integer> isolatedRooms = new ArrayList<>();
         for (int i = 0; i < roomAmount; i++) {
             isolatedRooms.add(i);
@@ -363,6 +456,55 @@ public class Driver {
                 }
             }
         }
+         */
+
+
+    }
+
+    private static void ConnectDoor_To_Door(ArrayList<Room> rooms, int i, int[] randomDoor, String cardinalDirection) {
+        String randomDoorCardinalDirection = null;
+        switch (randomDoor[0]) {
+            case 1 -> {
+                randomDoorCardinalDirection = "north";
+                rooms.get(randomDoor[1]).connectNorthTo(rooms.get(i));
+                rooms.get(randomDoor[1]).setDoorNorthEndpoint(cardinalDirection);
+            }
+            case 2 -> {
+                randomDoorCardinalDirection = "east";
+                rooms.get(randomDoor[1]).connectEastTo(rooms.get(i));
+                rooms.get(randomDoor[1]).setDoorEastEndpoint(cardinalDirection);
+            }
+            case 3 -> {
+                randomDoorCardinalDirection = "south";
+                rooms.get(randomDoor[1]).connectSouthTo(rooms.get(i));
+                rooms.get(randomDoor[1]).setDoorSouthEndpoint(cardinalDirection);
+            }
+            case 4 -> {
+                randomDoorCardinalDirection = "west";
+                rooms.get(randomDoor[1]).connectWestTo(rooms.get(i));
+                rooms.get(randomDoor[1]).setDoorWestEndpoint(cardinalDirection);
+            }
+        }
+
+        switch (cardinalDirection){
+            case "north" -> {
+                rooms.get(i).connectNorthTo(rooms.get(randomDoor[1]));
+                rooms.get(i).setDoorNorthEndpoint(randomDoorCardinalDirection);
+            }
+            case "east" -> {
+                rooms.get(i).connectEastTo(rooms.get(randomDoor[1]));
+                rooms.get(i).setDoorEastEndpoint(randomDoorCardinalDirection);
+            }
+            case "south" -> {
+                rooms.get(i).connectSouthTo(rooms.get(randomDoor[1]));
+                rooms.get(i).setDoorSouthEndpoint(randomDoorCardinalDirection);
+            }
+            case "west" -> {
+                rooms.get(i).connectWestTo(rooms.get(randomDoor[1]));
+                rooms.get(i).setDoorWestEndpoint(randomDoorCardinalDirection);
+            }
+
+        }
     }
 
     public void run() {
@@ -374,7 +516,7 @@ public class Driver {
 
         // int roomAmount = random.nextInt(5,26);
         System.out.println(colors.length);
-        int roomAmount = colors.length;
+        int roomAmount = 10;
         Room[] rooms = new Room[roomAmount];
 
         int randint1 = random.nextInt(3,7);
@@ -392,7 +534,6 @@ public class Driver {
         time = time / Math.pow(10, 9);
 
 
-        getConnectionSuggestion(rooms);
 
         // Place rooms, if legal by leve.place()
         for (int room = 0; room < rooms.length; room++) {
@@ -400,12 +541,22 @@ public class Driver {
                 rooms[room] = null;
             }
         }
+        List<ArrayList<int[]>> availableDoors = new ArrayList<>(roomAmount);
+        for (int i = 0; i < level.getRoomsContained().size(); i++){
+            ArrayList<int[]> roomArr = new ArrayList<int[]>(List.of(new int[]{1, i}
+                    , new int[]{2, i}
+                    , new int[]{3, i}
+                    , new int[]{4, i}));
+
+            availableDoors.add(roomArr);
+        }
+        getConnectionSuggestion(level.getRoomsContained(), availableDoors);
 
         System.out.println(time + " seconds");
         System.out.printf("%s rooms / second%n", (rooms.length * 100) / time);
 
         //Chooses first location
-        level.firstLocation(rooms[random.nextInt(0,(rooms.length - 1))]);
+        level.firstLocation(level.getRoomsContained().get(random.nextInt(0,(level.getRoomsContained().size() - 1))));
 
         LevelGUI gui = new LevelGUI(level, "lvl1");
         //TODO Others: Add comments
@@ -421,7 +572,7 @@ public class Driver {
 
         // int roomAmount = random.nextInt(5,26);
         System.out.println(colors.length);
-        int roomAmount = colors.length;
+        int roomAmount = 10;
         Room[] rooms = new Room[roomAmount];
 
         int randint1 = random.nextInt(3,7);
@@ -438,9 +589,6 @@ public class Driver {
         time = threadMX.getThreadCpuTime(1) - time;
         time = time / Math.pow(10, 9);
 
-
-        getConnectionSuggestion(rooms);
-
         // Place rooms, if legal by leve.place()
         for (int room = 0; room < rooms.length; room++) {
             if (!(level.place(rooms[room]))) {
@@ -448,6 +596,18 @@ public class Driver {
             }
         }
 
+        List<ArrayList<int[]>> availableDoors = new ArrayList<>(roomAmount);
+        for (int i = 0; i < level.getRoomsContained().size(); i++){
+            ArrayList<int[]> roomArr = new ArrayList<int[]>(List.of(new int[]{1, i}
+                    , new int[]{2, i}
+                    , new int[]{3, i}
+                    , new int[]{4, i}));
+
+            availableDoors.add(roomArr);
+        }
+        getConnectionSuggestion(level.getRoomsContained(), availableDoors);
+
+        level.firstLocation(level.getRoomsContained().get(random.nextInt(0,(level.getRoomsContained().size() - 1))));
         System.out.println(time + " seconds");
         System.out.printf("%s rooms / second%n", (rooms.length * 100) / time);
         //TODO Others: Add comments

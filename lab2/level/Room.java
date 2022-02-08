@@ -17,6 +17,11 @@ public class Room {
     private Room doorSouth;
     private Room doorWest;
 
+    private String doorNorthEndpoint;
+    private String doorEastEndpoint;
+    private String doorSouthEndpoint;
+    private String doorWestEndpoint;
+
     public Room(Room room) {
         this.x = room.x;
         this.y = room.y;
@@ -109,5 +114,37 @@ public class Room {
                 this.x <= room2.x + room2.width &&    // r1 left edge past r2 right
                 this.y + this.height >= room2.y &&    // r1 top edge past r2 bottom
                 this.y <= room2.y + room2.height;      // r1 bottom edge past r2 top
+    }
+
+    public String getDoorSouthEndpoint() {
+        return doorSouthEndpoint;
+    }
+
+    public void setDoorSouthEndpoint(String doorSouthEndpoint) {
+        this.doorSouthEndpoint = doorSouthEndpoint;
+    }
+
+    public String getDoorWestEndpoint() {
+        return doorWestEndpoint;
+    }
+
+    public void setDoorWestEndpoint(String doorWestEndpoint) {
+        this.doorWestEndpoint = doorWestEndpoint;
+    }
+
+    public String getDoorEastEndpoint() {
+        return doorEastEndpoint;
+    }
+
+    public void setDoorEastEndpoint(String doorEastEndpoint) {
+        this.doorEastEndpoint = doorEastEndpoint;
+    }
+
+    public String getDoorNorthEndpoint() {
+        return doorNorthEndpoint;
+    }
+
+    public void setDoorNorthEndpoint(String doorNorthEndpoint) {
+        this.doorNorthEndpoint = doorNorthEndpoint;
     }
 }

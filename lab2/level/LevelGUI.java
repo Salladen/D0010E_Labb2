@@ -135,8 +135,8 @@ public class LevelGUI extends myObserver {
 
 				drawRoomConnections(g, room, widthRatio, heightRatio, xOffset, yOffset);
 
-				Color[] borderColor = new Color[]{Color.WHITE, Color.MAGENTA, Color.WHITE};
-				for (int borderSize = 0; borderSize < ((level.getCurrentLocation() == room) ? 3 : 1); borderSize++){
+				Color[] borderColor = new Color[]{Color.BLACK, Color.BLACK, Color.BLACK, Color.WHITE, Color.WHITE, Color.BLACK, Color.BLACK, Color.BLACK};
+				for (int borderSize = 0; borderSize < ((level.getCurrentLocation() == room) ? 8 : 1); borderSize++){
 					g.setColor(borderColor[borderSize]);
 
 					g.drawRect((int) (room.getX() * widthRatio) + xOffset - borderSize
@@ -164,7 +164,7 @@ public class LevelGUI extends myObserver {
 				g.setColor(room.getNorth().getFloorColor());
 				g.fillRect(x + width * 2 / 5, y, width / 5, height / 5);
 
-				g.drawLine(x + width / 2, y, n_x + n_width / 2, n_y + n_height / 2);
+				// drawAtConnection(g, x + width / 2, y, n_x, n_y, n_width, n_height, room.getDoorNorthEndpoint());
 
 				g.setColor(Color.BLACK);
 				g.drawRect(x + width * 2 / 5, y, width / 5, height / 5);
@@ -179,7 +179,7 @@ public class LevelGUI extends myObserver {
 				g.setColor(room.getEast().getFloorColor());
 				g.fillRect(x + width * 4 / 5, y + height * 2 / 5, width / 5, height / 5);
 
-				g.drawLine(x + width, y + height / 2, e_x + e_width / 2, e_y + e_height / 2);
+				// drawAtConnection(g, x + width, y + height / 2, e_x, e_y, e_width, e_height, room.getDoorEastEndpoint());
 
 				g.setColor(Color.BLACK);
 				g.drawRect(x + width * 4 / 5, y + height * 2 / 5, width / 5, height / 5);
@@ -191,11 +191,10 @@ public class LevelGUI extends myObserver {
 				int s_width = (int) ((double) room.getSouth().getWidth() * widthRatio);
 				int s_height = (int) ((double) room.getSouth().getHeight() * heightRatio);
 
-				System.out.println(room.getSouth().getFloorColor());
 				g.setColor(room.getSouth().getFloorColor());
 				g.fillRect(x + width * 2 / 5, y + height * 4 / 5, width / 5, height / 5);
 
-				g.drawLine(x + width / 2, y + height, s_x + s_width / 2, s_y + s_height / 2);
+				// drawAtConnection(g, x + width / 2, y + height, s_x, s_y, s_width, s_height, room.getDoorSouthEndpoint());
 
 				g.setColor(Color.BLACK);
 				g.drawRect(x + width * 2 / 5, y + height * 4 / 5, width / 5, height / 5);
@@ -210,7 +209,7 @@ public class LevelGUI extends myObserver {
 				g.setColor(room.getWest().getFloorColor());
 				g.fillRect(x, y + height * 2 / 5, width / 5, height / 5);
 
-				g.drawLine(x, y / 2, w_x + w_width / 2, w_y + w_height / 2);
+				// drawAtConnection(g, x, y / 2, w_x, w_y, w_width, w_height, room.getDoorWestEndpoint());
 
 				g.setColor(Color.BLACK);
 				g.drawRect(x, y + height * 2 / 5, width / 5, height / 5);
@@ -255,5 +254,20 @@ public class LevelGUI extends myObserver {
 	 	}
 
 	}
-	
+
+	private void drawAtConnection(Graphics g, int x, int y, int d_x, int d_y, int d_width, int d_height, String cardinal_direction) {
+		switch (cardinal_direction){
+			/*case "north" -> g.drawLine(x, y, d_x + d_width / 2, d_y);
+			case "east" -> g.drawLine(x, y, d_x + d_width, d_y + d_height / 2);
+			case "south" -> g.drawLine(x, y, d_x + d_width / 2, d_y + d_height);
+			case "west" -> g.drawLine(x, y, d_x, d_y + d_height / 2);*/
+
+			case "north" -> g.drawPolygon(new int[]{x, d_x + d_width / 2}, new int[]{y, d_y}, 2);
+			case "east" -> g.drawPolygon(new int[]{x, d_x + d_width}, new int[]{y, d_y + d_height / 2}, 2);
+			case "south" -> g.drawPolygon(new int[]{x, d_x + d_width / 2}, new int[]{y, d_y + d_height}, 2);
+			case "west" -> g.drawPolygon(new int[]{x, d_x}, new int[]{y, d_y + d_height / 2}, 2);
+
+		}
+	}
+
 }
